@@ -5,15 +5,18 @@
   
 
   
-  <title>Jason 的领域</title>
+  <title>JavaScript 之继承 | Jason 的领域</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="生活不只有技术">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jason 的领域">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;index.html">
+  <meta name="description" content="很多编程语言都有继承的概念，在 JavaScript 中我们通过原型和原型链来实现继承，原型和原型链的知识将在之后给大家整理出来。 首先请思考一个问题，有如下代码 1234567function Super() &amp;#123;&amp;#125;Super.prototype.sex &#x3D; &#39;male&#39;;var s &#x3D; new Super();s.sex; &#x2F;&#x2F; &#39;male&#39;function Sub() &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript 之继承">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;22&#x2F;Extends&#x2F;index.html">
 <meta property="og:site_name" content="Jason 的领域">
-<meta property="og:description" content="生活不只有技术">
+<meta property="og:description" content="很多编程语言都有继承的概念，在 JavaScript 中我们通过原型和原型链来实现继承，原型和原型链的知识将在之后给大家整理出来。 首先请思考一个问题，有如下代码 1234567function Super() &amp;#123;&amp;#125;Super.prototype.sex &#x3D; &#39;male&#39;;var s &#x3D; new Super();s.sex; &#x2F;&#x2F; &#39;male&#39;function Sub() &amp;#">
 <meta property="og:locale" content="zh">
+<meta property="article:published_time" content="2019-12-22T13:54:37.000Z">
+<meta property="article:modified_time" content="2019-12-22T14:54:03.213Z">
+<meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Jason 的领域" type="application/atom+xml">
@@ -63,9 +66,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Extends" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Extends" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/12/22/Extends/" class="article-date">
   <time datetime="2019-12-22T13:54:37.000Z" itemprop="datePublished">2019-12-22</time>
@@ -78,8 +79,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/12/22/Extends/">JavaScript 之继承</a>
+    <h1 class="article-title" itemprop="name">
+      JavaScript 之继承
     </h1>
   
 
@@ -128,127 +129,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-FirstBlob" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/12/17/FirstBlob/" class="article-date">
-  <time datetime="2019-12-16T16:40:54.000Z" itemprop="datePublished">2019-12-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/12/17/FirstBlob/">JavaScript 基本类型之 Bigint</a>
-    </h1>
+    <a href="/2019/12/17/FirstBlob/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JavaScript 基本类型之 Bigint</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><strong><font color=#0099ff>BigInt</font></strong> 是 <strong>ES10</strong> 提出的新的基本数据类型。提供一种方法表示 <strong>2<sup>53</sup>-1</strong> 的整数。该数原本是 <strong>JavaScript</strong> 所能表示的最大的数。</p>
-<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><hr>
-<p>在这之前 <strong>JavaScript</strong> 所有的数字都使用双精度 64 位浮点格式表示，所以非常大的整数会自动进行四舍五入。这会带来一些误差。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">9999999999999999</span>) <span class="comment">// 输出 10000000000000000</span></span><br><span class="line"><span class="number">9007199254740992</span> === <span class="number">9007199254740993</span> <span class="comment">// 输出 true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><hr>
-<p>而现在使用 <strong><font color=#0099ff>BigInt</font></strong> 则可以消除这种误差。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BigInt(<span class="number">900719925474099</span>) === BigInt(<span class="number">9007199254740993</span>) <span class="comment">// 输出 false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><hr>
-<p>可以用在一个整数字面量后面加 <font color=#0099ff>n</font> 的方式定义一个 <strong><font color=#0099ff>BigInt</font></strong>,如 <font color=#0099ff>10n</font> 或者调用 <font color=#0099ff>BigInt()</font> 函数。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> theBiggestInt = <span class="number">9007199254740991n</span>;</span><br><span class="line"><span class="keyword">const</span> alsoHuge = BigInt(<span class="number">9007199254740991</span>);</span><br><span class="line"><span class="comment">// ↪ 9007199254740991n</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> hugeString = BigInt(<span class="string">"9007199254740991"</span>);</span><br><span class="line"><span class="comment">// ↪ 9007199254740991n</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> hugeHex = BigInt(<span class="string">"0x1fffffffffffff"</span>);</span><br><span class="line"><span class="comment">// ↪ 9007199254740991n</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> hugeBin = BigInt(<span class="string">"0b11111111111111111111111111111111111111111111111111111"</span>);</span><br><span class="line"><span class="comment">// ↪ 9007199254740991n</span></span><br></pre></td></tr></table></figure>
-
-<p>它在某些方面类似于 <font color=#0099ff>Number</font>，但是有几个不同的关键点：</p>
-<ul>
-<li>不能用于 <font color=#0099ff>Math</font> 对象中的方法</li>
-<li>不能和任何 <font color=#0099ff>Number</font> 实例混合运算，两者必须转换成同一种类型</li>
-<li><font color=#0099ff>BigInt</font> 变量在转换成 <font color=#0099ff>Number</font> 变量时可能会丢失精度</li>
-<li>当使用 <font color=#0099ff>BigInt</font> 时，带小数的运算会被取整</li>
-<li><font color=#0099ff>BigInt</font> 和 <font color=#0099ff>Number</font> 不是严格相等的，但是宽松相等的</li>
-<li><font color=#0099ff>Number</font> 和 <font color=#0099ff>BigInt</font> 可以进行比较</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> expected = <span class="number">4n</span> / <span class="number">2n</span>;</span><br><span class="line"><span class="comment">// ↪ 2n</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> rounded = <span class="number">5n</span> / <span class="number">2n</span>;</span><br><span class="line"><span class="comment">// ↪ 2n, 不是 2.5n</span></span><br><span class="line"></span><br><span class="line"><span class="number">1n</span> &lt; <span class="number">2</span></span><br><span class="line"><span class="comment">// ↪ true</span></span><br><span class="line"></span><br><span class="line"><span class="number">2n</span> &gt;= <span class="number">2</span></span><br><span class="line"><span class="comment">// ↪ true</span></span><br></pre></td></tr></table></figure>
-
-<p>使用 <font color=#0099ff>typeof</font> 操作符返回的是 <font color=#0099ff>bigint</font></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="number">1n</span> === <span class="string">'bigint'</span>; <span class="comment">// true</span></span><br><span class="line"><span class="keyword">typeof</span> BigInt(<span class="string">'1'</span>) === <span class="string">'bigint'</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><hr>
-<p><font color=#0099ff>BigInt</font> 是一种新的数据类型，用于当整数值大于 <font color=#0099ff>Number</font> 数据类型支持的范围时。这种数据类型允许我们安全地对大整数执行算术操作。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/17/FirstBlob/" data-id="ck4bexm450001exma88if2irs" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/12/17/hello-world/" class="article-date">
-  <time datetime="2019-12-16T16:18:26.925Z" itemprop="datePublished">2019-12-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/12/17/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/17/hello-world/" data-id="ck4bexm3x0000exma7o3p2vb4" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
 
 </section>
         
