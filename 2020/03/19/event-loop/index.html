@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>浅谈浏览器和 Node 事件循环 | Jason 的领域</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 浏览器中的事件循环浏览器是多线程的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。JavaScript 的所有任务可以分为两类：同步任务或异步任务。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈浏览器和 Node 事件循环">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;19&#x2F;event-loop&#x2F;index.html">
+<meta property="og:site_name" content="Jason 的领域">
+<meta property="og:description" content="1. 浏览器中的事件循环浏览器是多线程的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。JavaScript 的所有任务可以分为两类：同步任务或异步任务。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队">
+<meta property="og:locale" content="zh">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100801.jpg">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100802.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100803.png">
+<meta property="article:published_time" content="2020-03-19T09:24:21.410Z">
+<meta property="article:modified_time" content="2020-03-19T12:13:20.245Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100801.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Jason 的领域" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/source/favicon.svg">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jason 的领域</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-event-loop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/03/19/event-loop/" class="article-date">
+  <time datetime="2020-03-19T09:24:21.410Z" itemprop="datePublished">2020-03-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浅谈浏览器和 Node 事件循环
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-浏览器中的事件循环"><a href="#1-浏览器中的事件循环" class="headerlink" title="1. 浏览器中的事件循环"></a>1. 浏览器中的事件循环</h3><p>浏览器是<strong>多线程</strong>的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。<br>JavaScript 的所有任务可以分为两类：<strong>同步任务</strong>或<strong>异步任务</strong>。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。<br>具体来说，异步执行的运行机制如下。（同步执行也是如此，因为它可以被视为没有异步任务的异步执行。）</p>
+<blockquote>
+<ol>
+<li>所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。</li>
+<li>主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。</li>
+<li>一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。</li>
+<li>主线程不断重复上面的第三步。</li>
+</ol>
+</blockquote>
+<p>过程示意图（来自于阮一峰老师）<br><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100801.jpg" alt="&#39;事件循环&#39;" title="事件循环"></p>
+<p>主线程从”任务队列”中读取事件，这个过程是循环不断的，所以整个的这种运行机制又称为<strong>Event Loop</strong>（事件循环）。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100802.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<p>这段代码输出为 1，3，2，因为只有函数调用栈完毕之后，才会去任务队列执行回调函数。<br>总之，setTimeout(fn,0) 的含义是，指定某个任务在主线程最早可得的 <strong>空闲</strong> 时间执行，也就是说，尽可能早得执行。它在”任务队列”的尾部添加一个事件，因此要等到同步任务和”任务队列”现有的事件都处理完，才会得到执行。</p>
+<p>HTML5 标准规定了setTimeout()的第二个参数的最小值（最短间隔），不得低于 4 毫秒，如果低于这个值，就会自动增加。在此之前，老版本的浏览器都将最短间隔设为 10 毫秒。另外，对于那些 DOM 的变动（尤其是涉及页面重新渲染的部分），通常不会立即执行，而是每 16 毫秒执行一次。</p>
+<h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的Event Loop，但是它的运行机制不同于浏览器环境。</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100803.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
+<blockquote>
+<ol>
+<li>V8 引擎解析 JavaScript 脚本。</li>
+<li>解析后的代码，调用 Node API。</li>
+<li>libuv 库负责 Node API 的执行。它将不同的任务分配给不同的线程，形成一个 Event Loop（事件循环），以异步的方式将任务的执行结果返回给 V8 引擎。</li>
+<li>V8引擎再将结果返回给用户。</li>
+</ol>
+</blockquote>
+<p>Node 额外提供了两个与”任务队列”有关的方法：process.nextTick 和 setImmediate。</p>
+<ul>
+<li>process.nextTick 方法可以在当前”执行栈”的尾部—-下一次 Event Loop（主线程读取”任务队列”）之前—-触发回调函数。它指定的任务总是发生在所有异步任务之前。</li>
+<li>setImmediate 方法则是在当前”任务队列”的尾部添加事件，也就是说，它指定的任务总是在下一次 Event Loop 时执行，这与 setTimeout(fn, 0) 很像。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">  process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timeout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'TIMEOUT FIRED'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// TIMEOUT FIRED</span></span><br></pre></td></tr></table></figure>
+<p>process.nextTick 总在这次事件循环结尾，下一次循环之前执行，不论是否嵌套，process.nextTick 都会在当前执行栈执行。</p>
+<p>再看 setImmediate。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">	setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timeout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'TIMEOUT FIRED'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>这段代码执行结果是不确定的，因为都是在下一事件循环开始执行。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  process.nextTick(foo);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>为了避免这样的饥饿调用，该处建议使用 setImmediate</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/19/event-loop/" data-id="ck7ypv0o30001qdmac3hyf0u3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/03/19/eventLoop/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">eventLoop</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/03/19/event-loop/">浅谈浏览器和 Node 事件循环</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/19/eventLoop/">eventLoop</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/18/debounseAndthrottle/">debounseAndthrottle</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/22/Extends/">JavaScript 之继承</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/17/FirstBlob/">JavaScript 基本类型之 Bigint</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Jason 的领域<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

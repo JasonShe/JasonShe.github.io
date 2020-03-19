@@ -5,18 +5,20 @@
   
 
   
-  <title>Hello World | Jason 的领域</title>
+  <title>eventLoop | Jason 的领域</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="事件循环浏览器是多线程的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。 JavaScript 的所有任务可以分为两类：同步任务或异步任务。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;hello-world&#x2F;index.html">
+<meta property="og:title" content="eventLoop">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;19&#x2F;eventLoop&#x2F;index.html">
 <meta property="og:site_name" content="Jason 的领域">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="事件循环浏览器是多线程的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。 JavaScript 的所有任务可以分为两类：同步任务或异步任务。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程">
 <meta property="og:locale" content="zh">
-<meta property="article:published_time" content="2019-12-16T16:18:26.925Z">
-<meta property="article:modified_time" content="2019-12-16T16:18:26.926Z">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100801.jpg">
+<meta property="article:published_time" content="2020-03-19T08:54:57.325Z">
+<meta property="article:modified_time" content="2020-03-19T09:17:18.284Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100801.jpg">
   
     <link rel="alternate" href="/atom.xml" title="Jason 的领域" type="application/atom+xml">
   
@@ -65,10 +67,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-eventLoop" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2019/12/17/hello-world/" class="article-date">
-  <time datetime="2019-12-16T16:18:26.925Z" itemprop="datePublished">2019-12-17</time>
+    <a href="/2020/03/19/eventLoop/" class="article-date">
+  <time datetime="2020-03-19T08:54:57.325Z" itemprop="datePublished">2020-03-19</time>
 </a>
     
   </div>
@@ -79,7 +81,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      eventLoop
     </h1>
   
 
@@ -87,24 +89,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h1 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h1><p>浏览器是<strong>多线程</strong>的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。</p>
+<p>JavaScript 的所有任务可以分为两类：<strong>同步任务</strong>或<strong>异步任务</strong>。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。</p>
+<p>具体来说，异步执行的运行机制如下。（同步执行也是如此，因为它可以被视为没有异步任务的异步执行。）</p>
+<blockquote>
+<ol>
+<li>所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。</li>
+<li>主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。</li>
+<li>一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。</li>
+<li>主线程不断重复上面的第三步。</li>
+</ol>
+</blockquote>
+<p>过程示意图（来自于阮一峰老师）<br><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100801.jpg" alt="&#39;事件循环&#39;" title="事件循环"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/17/hello-world/" data-id="ck4imgwwm0003cpma7dql3gfj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/03/19/eventLoop/" data-id="ck7ypv0nj0000qdma5ual364w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -113,15 +114,20 @@
     
 <nav id="article-nav">
   
-    <a href="/2019/12/17/FirstBlob/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/03/19/event-loop/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          JavaScript 基本类型之 Bigint
+          浅谈浏览器和 Node 事件循环
         
       </div>
     </a>
   
+  
+    <a href="/2020/03/18/debounseAndthrottle/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">debounseAndthrottle</div>
+    </a>
   
 </nav>
 
