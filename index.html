@@ -88,14 +88,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="1-浏览器中的事件循环"><a href="#1-浏览器中的事件循环" class="headerlink" title="1. 浏览器中的事件循环"></a>1. 浏览器中的事件循环</h3><p>浏览器是<strong>多线程</strong>的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。<br>JavaScript 的所有任务可以分为两类：<strong>同步任务</strong>或<strong>异步任务</strong>。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。<br>具体来说，异步执行的运行机制如下。（同步执行也是如此，因为它可以被视为没有异步任务的异步执行。）</p>
-<blockquote>
 <ol>
 <li>所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。</li>
 <li>主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。</li>
 <li>一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。</li>
 <li>主线程不断重复上面的第三步。</li>
 </ol>
-</blockquote>
 <p>过程示意图（来自于阮一峰老师）<br><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100801.jpg" alt="&#39;事件循环&#39;" title="事件循环"></p>
 <p>主线程从”任务队列”中读取事件，这个过程是循环不断的，所以整个的这种运行机制又称为<strong>Event Loop</strong>（事件循环）。</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100802.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
@@ -104,14 +102,12 @@
 <p>HTML5 标准规定了setTimeout()的第二个参数的最小值（最短间隔），不得低于 4 毫秒，如果低于这个值，就会自动增加。在此之前，老版本的浏览器都将最短间隔设为 10 毫秒。另外，对于那些 DOM 的变动（尤其是涉及页面重新渲染的部分），通常不会立即执行，而是每 16 毫秒执行一次。</p>
 <h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的 Event Loop，但是它的运行机制不同于浏览器环境。</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100803.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
-<blockquote>
 <ol>
 <li>V8 引擎解析 JavaScript 脚本。</li>
 <li>解析后的代码，调用 Node API。</li>
 <li>libuv 库负责 Node API 的执行。它将不同的任务分配给不同的线程，形成一个 Event Loop（事件循环），以异步的方式将任务的执行结果返回给 V8 引擎。</li>
 <li>V8引擎再将结果返回给用户。</li>
 </ol>
-</blockquote>
 <p>Node 额外提供了两个与”任务队列”有关的方法：process.nextTick 和 setImmediate。</p>
 <ul>
 <li>process.nextTick 方法可以在当前”执行栈”的尾部—-下一次 Event Loop（主线程读取”任务队列”）之前—-触发回调函数。它指定的任务总是发生在所有异步任务之前。</li>
@@ -120,7 +116,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">  process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timeout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'TIMEOUT FIRED'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// TIMEOUT FIRED</span></span><br></pre></td></tr></table></figure>
 <p>process.nextTick 总在这次事件循环结尾，下一次循环之前执行，不论是否嵌套，process.nextTick 都会在当前执行栈执行。</p>
 <p>再看 setImmediate。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">	setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timeout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'TIMEOUT FIRED'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">  setImmediate(<span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> <span class="title">timeout</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'TIMEOUT FIRED'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 <p>这段代码执行结果是不确定的，因为都是在下一事件循环开始执行。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">process.nextTick(<span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  process.nextTick(foo);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>为了避免这样的饥饿调用，该处建议使用 setImmediate</p>
