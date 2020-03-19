@@ -18,7 +18,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100802.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100803.png">
 <meta property="article:published_time" content="2020-03-19T09:24:21.410Z">
-<meta property="article:modified_time" content="2020-03-19T12:13:20.245Z">
+<meta property="article:modified_time" content="2020-03-19T12:18:54.822Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;www.ruanyifeng.com&#x2F;blogimg&#x2F;asset&#x2F;2014&#x2F;bg2014100801.jpg">
   
@@ -106,7 +106,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
 <p>这段代码输出为 1，3，2，因为只有函数调用栈完毕之后，才会去任务队列执行回调函数。<br>总之，setTimeout(fn,0) 的含义是，指定某个任务在主线程最早可得的 <strong>空闲</strong> 时间执行，也就是说，尽可能早得执行。它在”任务队列”的尾部添加一个事件，因此要等到同步任务和”任务队列”现有的事件都处理完，才会得到执行。</p>
 <p>HTML5 标准规定了setTimeout()的第二个参数的最小值（最短间隔），不得低于 4 毫秒，如果低于这个值，就会自动增加。在此之前，老版本的浏览器都将最短间隔设为 10 毫秒。另外，对于那些 DOM 的变动（尤其是涉及页面重新渲染的部分），通常不会立即执行，而是每 16 毫秒执行一次。</p>
-<h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的Event Loop，但是它的运行机制不同于浏览器环境。</p>
+<h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的 Event Loop，但是它的运行机制不同于浏览器环境。</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100803.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
 <blockquote>
 <ol>
@@ -142,9 +142,9 @@
 <nav id="article-nav">
   
   
-    <a href="/2020/03/19/eventLoop/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/03/18/debounseAndthrottle/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">eventLoop</div>
+      <div class="article-nav-title">debounseAndthrottle</div>
     </a>
   
 </nav>
@@ -199,10 +199,6 @@
           </li>
         
           <li>
-            <a href="/2020/03/19/eventLoop/">eventLoop</a>
-          </li>
-        
-          <li>
             <a href="/2020/03/18/debounseAndthrottle/">debounseAndthrottle</a>
           </li>
         
@@ -212,6 +208,10 @@
         
           <li>
             <a href="/2019/12/17/FirstBlob/">JavaScript 基本类型之 Bigint</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/17/hello-world/">Hello World</a>
           </li>
         
       </ul>

@@ -102,7 +102,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(<span class="number">2</span>);&#125;,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
 <p>这段代码输出为 1，3，2，因为只有函数调用栈完毕之后，才会去任务队列执行回调函数。<br>总之，setTimeout(fn,0) 的含义是，指定某个任务在主线程最早可得的 <strong>空闲</strong> 时间执行，也就是说，尽可能早得执行。它在”任务队列”的尾部添加一个事件，因此要等到同步任务和”任务队列”现有的事件都处理完，才会得到执行。</p>
 <p>HTML5 标准规定了setTimeout()的第二个参数的最小值（最短间隔），不得低于 4 毫秒，如果低于这个值，就会自动增加。在此之前，老版本的浏览器都将最短间隔设为 10 毫秒。另外，对于那些 DOM 的变动（尤其是涉及页面重新渲染的部分），通常不会立即执行，而是每 16 毫秒执行一次。</p>
-<h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的Event Loop，但是它的运行机制不同于浏览器环境。</p>
+<h3 id="2-Node-中的事件循环"><a href="#2-Node-中的事件循环" class="headerlink" title="2. Node 中的事件循环"></a>2. Node 中的事件循环</h3><p>Node.js也是单线程的 Event Loop，但是它的运行机制不同于浏览器环境。</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100803.png" alt="&#39;事件循环&#39;" title="事件循环"></p>
 <blockquote>
 <ol>
@@ -129,54 +129,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2020/03/19/event-loop/" data-id="ck7ypv0o30001qdmac3hyf0u3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-eventLoop" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/03/19/eventLoop/" class="article-date">
-  <time datetime="2020-03-19T08:54:57.325Z" itemprop="datePublished">2020-03-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/19/eventLoop/">eventLoop</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h1><p>浏览器是<strong>多线程</strong>的，只不过浏览器只会使用一个线程来执行 JavaScript，所以不会有多线程语言（比如 Java）出现的多线程问题。</p>
-<p>JavaScript 的所有任务可以分为两类：<strong>同步任务</strong>或<strong>异步任务</strong>。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。</p>
-<p>具体来说，异步执行的运行机制如下。（同步执行也是如此，因为它可以被视为没有异步任务的异步执行。）</p>
-<blockquote>
-<ol>
-<li>所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。</li>
-<li>主线程之外，还存在一个”任务队列”（task queue）。只要异步任务有了运行结果，就在”任务队列”之中放置一个事件。</li>
-<li>一旦”执行栈”中的所有同步任务执行完毕，系统就会读取”任务队列”，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。</li>
-<li>主线程不断重复上面的第三步。</li>
-</ol>
-</blockquote>
-<p>过程示意图（来自于阮一峰老师）<br><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014100801.jpg" alt="&#39;事件循环&#39;" title="事件循环"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/19/eventLoop/" data-id="ck7ypv0nj0000qdma5ual364w" class="article-share-link">Share</a>
       
       
     </footer>
@@ -466,10 +418,6 @@
           </li>
         
           <li>
-            <a href="/2020/03/19/eventLoop/">eventLoop</a>
-          </li>
-        
-          <li>
             <a href="/2020/03/18/debounseAndthrottle/">debounseAndthrottle</a>
           </li>
         
@@ -479,6 +427,10 @@
         
           <li>
             <a href="/2019/12/17/FirstBlob/">JavaScript 基本类型之 Bigint</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/17/hello-world/">Hello World</a>
           </li>
         
       </ul>
